@@ -36,7 +36,8 @@ export default function SingleProduct() {
 
   useEffect(() => {
     getSingleProduct(`${API}?id=${id}`);
-  }, [id]);
+  }, [id, getSingleProduct]); // ✅ getSingleProduct bhi dependency mein daal do
+
 
   if (isSingleLoading) {
     return (
