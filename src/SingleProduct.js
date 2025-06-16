@@ -12,17 +12,25 @@ import StarRating from "./components/StarRating";
 import AddToCart from "./components/AddToCart";
 
 const API = "https://api.pujakaitem.com/api/products";
-export default function SingleProduct() {
-  const { isSingleLoading, singleProduct, getSingleProduct } =
-    useProductContext();
-  console.log(singleProduct);
 
+export default function SingleProduct() {
+  const { isSingleLoading, singleProduct, getSingleProduct } = useProductContext();
   const { id } = useParams();
-  console.log(id);
+
+  useEffect(() => {
+    getSingleProduct(`${API}?id=${id}`);
+  }, [id, getSingleProduct]); // Correct dependency array
+
+  if (isSingleLoading) {
+    return (
+      <div className="d-flex justify-content-center">
+        <Bars height="50" width="80" color="black" ariaLabel="loading" />
+      </div>
+    );
+  }
 
   // destructure
   const {
-    // id: alias,
     name,
     image,
     company,
@@ -34,19 +42,6 @@ export default function SingleProduct() {
     reviews,
   } = singleProduct;
 
-  useEffect(() => {
-    getSingleProduct(`${API}?id=${id}`);
-  }, [id, getSingleProduct]); // ✅ getSingleProduct bhi dependency mein daal do
-
-
-  if (isSingleLoading) {
-    return (
-      <div className="d-flex justify-content-center">
-        <Bars height="50" width="80" color="black" ariaLabel="loading" />
-      </div>
-    );
-  }
-
   return (
     <>
       <PageNavigation title={name} />
@@ -56,21 +51,26 @@ export default function SingleProduct() {
           <div className="col-md-6">
             <MyImage images={image} />
           </div>
+
           {/* Single Product Data */}
           <div className="col-md-6">
             <h2>{name}</h2>
             <StarRating stars={stars} reviews={reviews} />
+
             <p className="mt-3">
               MRP :
               <del>
                 <FormatPrice price={price + 50000} />
               </del>
             </p>
+
             <p>
               Deal of the Day :
               <FormatPrice price={price} />
             </p>
+
             <p>{description}</p>
+
             <div className="d-flex justify-content-around align-items-center text-center">
               <div>
                 <TbTruckDelivery className="h3" />
@@ -78,22 +78,23 @@ export default function SingleProduct() {
               </div>
               <div>
                 <TbReplace className="h3" />
-                <p>30 Days Replacemenet</p>
+                <p>30 Days Replacement</p>
               </div>
               <div>
                 <GiTakeMyMoney className="h3" />
-                <p>1 year Warrenty</p>
+                <p>1 Year Warranty</p>
               </div>
               <div>
                 <MdSecurity className="h3 fw-bold" />
                 <p>Secure Payment</p>
               </div>
             </div>
+
             <div>
               <p>
                 Available :
                 <span className="fw-bold">
-                  {stock > 0 ? "In Stock" : "Not Avaiable"}
+                  {stock > 0 ? "In Stock" : "Not Available"}
                 </span>
               </p>
               <p>
@@ -105,8 +106,10 @@ export default function SingleProduct() {
                 <span className="fw-bold text-capitalize">{company}</span>
               </p>
             </div>
-            <div className="border border-1 border-dark"></div>
-            {stock > 0 && <AddToCart product = {singleProduct}/>}
+
+            <div className="border border-1 border-dark my-3"></div>
+
+            {stock > 0 && <AddToCart product={singleProduct} />}
           </div>
         </div>
       </div>

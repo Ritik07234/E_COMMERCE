@@ -53,7 +53,7 @@ export default function FilterSection() {
           {categoryData.map((currentElement, index) => (
             <button
               key={index}
-              className="btn text-start border-0 text-capitalize fw-bold "
+              className="btn btn-light text-start text-capitalize fw-bold mb-1"
               type="button"
               name="category"
               value={currentElement}

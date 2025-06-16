@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useContext, useEffect, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer, useCallback } from "react";
 import reducer from "../reducer/ProductReducer";
 
 const AppContext = createContext();
@@ -13,48 +13,46 @@ const AppProvider = ({ children }) => {
     isError: false,
     products: [],
     featureProducts: [],
-    isSingleLoading : false,
-    singleProduct : {}
+    isSingleLoading: false,
+    singleProduct: {},
   };
 
   // UseReducer Hook
   const [state, dispatch] = useReducer(reducer, initialstate);
 
-  // getProducts Function for Fetching Api Data
+  // ✅ getProducts Function (no need to change)
   const getProducts = async (url) => {
     dispatch({ type: "SET_LOADING" });
     try {
       const res = await axios.get(url);
-      console.log(res);
       const products = await res.data;
-      console.log(products);
       dispatch({ type: "SET_API_DATA", payload: products });
     } catch (error) {
       dispatch({ type: "API_ERROR" });
     }
   };
 
-  // Api Call For Sngle Products
-  const getSingleProduct = async (url) => {
-    dispatch({type  : "SET_SINGLE_LOADING"});
+  // ✅ getSingleProduct wrapped in useCallback
+  const getSingleProduct = useCallback(async (url) => {
+    dispatch({ type: "SET_SINGLE_LOADING" });
     try {
       const res = await axios.get(url);
-      console.log(res);
-      const Singleproduct = await res.data;
-      console.log(Singleproduct);
-      dispatch({type : "SET_SINGLE_DATA" , payload : Singleproduct})
+      const singleProduct = await res.data;
+      dispatch({ type: "SET_SINGLE_DATA", payload: singleProduct });
     } catch (error) {
       dispatch({ type: "SET_SINGLE_ERROR" });
     }
-  };
+  }, []); // ✅ Empty dependency = stable function reference
 
-  // UseEffect Hook
+  // useEffect to fetch all products once
   useEffect(() => {
     getProducts(API);
   }, []);
 
   return (
-    <AppContext.Provider value={{ ...state , getSingleProduct }}>{children}</AppContext.Provider>
+    <AppContext.Provider value={{ ...state, getSingleProduct }}>
+      {children}
+    </AppContext.Provider>
   );
 };
 
