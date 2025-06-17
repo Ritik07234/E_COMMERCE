@@ -35,7 +35,7 @@ git clone https://github.com/Ritik07234/E_COMMERCE.git
 
 ### 2. Navigate into the project folder
 ```bash
-cd ecommerce-react-app
+cd E_COMMERCE
 ```
 
 ### 3. Install dependencies
